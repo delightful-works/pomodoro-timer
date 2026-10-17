@@ -1,0 +1,388 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>포모도로 타이머</title>
+<style>
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg,
+      #d56a70 0%, #c35460 52%, #a94051 100%);
+    color: white;
+    font-family: Inter, -apple-system, BlinkMacSystemFont,
+      "Segoe UI", Arial, sans-serif;
+  }
+
+  .app {
+    width: min(760px, 94vw);
+    text-align: center;
+    padding: 50px 16px;
+  }
+
+  h1 {
+    font-size: clamp(36px, 5vw, 48px);
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    margin: 0 0 58px;
+  }
+
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 42px;
+  }
+
+  button {
+    font: inherit;
+    cursor: pointer;
+    border: 0;
+    transition: background .2s;
+  }
+
+  .tab {
+    padding: 16px 23px;
+    border-radius: 12px;
+    background: transparent;
+    color: white;
+    font-size: clamp(14px, 2vw, 18px);
+    white-space: nowrap;
+  }
+
+  .tab.active {
+    background: rgba(255,255,255,.22);
+    font-weight: 650;
+  }
+
+  .tab:hover {
+    background: rgba(255,255,255,.15);
+  }
+
+  .clock {
+    font-size: clamp(100px, 20vw, 180px);
+    font-weight: 700;
+    letter-spacing: -8px;
+    line-height: 1.15;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 50px;
+  }
+
+  .controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .primary {
+    min-width: 220px;
+    padding: 21px 48px;
+    border-radius: 14px;
+    background: white;
+    color: #b94b59;
+    font-size: 23px;
+    font-weight: 700;
+  }
+
+  .secondary {
+    width: 70px;
+    height: 70px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.17);
+    color: white;
+    font-size: 28px;
+  }
+
+  .primary:hover { background: #f9eeee; }
+  .secondary:hover {
+    background: rgba(255,255,255,.27);
+  }
+
+  .message {
+    margin-top: 42px;
+    font-size: 19px;
+    opacity: .9;
+  }
+
+  .settings {
+    display: none;
+    max-width: 520px;
+    margin: 42px auto 0;
+    padding: 30px;
+    border-radius: 18px;
+    background: rgba(90,20,35,.19);
+    text-align: left;
+  }
+
+  .settings.visible { display: block; }
+
+  .settings h2 {
+    margin: 0 0 26px;
+    font-size: 23px;
+  }
+
+  .setting {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 22px 0;
+    font-size: 18px;
+  }
+
+  .setting input {
+    width: 100px;
+    padding: 13px;
+    border: 0;
+    border-radius: 9px;
+    background: white;
+    color: #333;
+    font: inherit;
+    text-align: center;
+  }
+
+  .save {
+    width: 100%;
+    margin-top: 15px;
+    padding: 17px;
+    border-radius: 11px;
+    background: white;
+    color: #b94b59;
+    font-size: 19px;
+    font-weight: 700;
+  }
+
+  button:focus-visible, input:focus-visible {
+    outline: 3px solid white;
+    outline-offset: 4px;
+  }
+
+  @media (max-width: 480px) {
+    .app { padding: 35px 8px; }
+    h1 { margin-bottom: 42px; }
+    .tabs { gap: 3px; margin-bottom: 35px; }
+    .tab { padding: 12px 10px; }
+    .clock {
+      font-size: clamp(75px, 21vw, 110px);
+      letter-spacing: -4px;
+      margin-bottom: 38px;
+    }
+    .controls { gap: 10px; }
+    .primary {
+      min-width: 150px;
+      padding: 17px 25px;
+      font-size: 19px;
+    }
+    .secondary {
+      width: 58px;
+      height: 58px;
+      font-size: 23px;
+    }
+    .setting { font-size: 15px; }
+  }
+</style>
+</head>
+
+<body>
+<main class="app">
+  <h1>Pomodoro Timer</h1>
+
+  <nav class="tabs" aria-label="Timer mode">
+    <button class="tab active" data-mode="pomodoro">
+      포모도로
+    </button>
+    <button class="tab" data-mode="short">
+      짧은 휴식
+    </button>
+    <button class="tab" data-mode="long">
+      긴 휴식
+    </button>
+  </nav>
+
+  <div class="clock" id="clock" role="timer">25:00</div>
+
+  <div class="controls">
+    <button class="secondary" id="reset"
+      title="Reset" aria-label="Reset timer">↻</button>
+    <button class="primary" id="toggle">Start</button>
+    <button class="secondary" id="settingsButton"
+      title="Settings" aria-label="Timer settings">⚙</button>
+  </div>
+
+  <div class="message" id="message">Time to focus</div>
+
+  <section class="settings" id="settings">
+    <h2>Timer Settings</h2>
+
+    <label class="setting">
+      Pomodoro (minutes)
+      <input id="pomodoroTime" type="number"
+        min="1" max="999" value="25">
+    </label>
+
+    <label class="setting">
+      Short Break (minutes)
+      <input id="shortTime" type="number"
+        min="1" max="999" value="5">
+    </label>
+
+    <label class="setting">
+      Long Break (minutes)
+      <input id="longTime" type="number"
+        min="1" max="999" value="10">
+    </label>
+
+    <button class="save" id="save">Save Changes</button>
+  </section>
+</main>
+
+<script>
+  const durations = {
+    pomodoro: 25,
+    short: 5,
+    long: 10
+  };
+
+  const messages = {
+    pomodoro: "Time to focus",
+    short: "Take a short break",
+    long: "Take a long break"
+  };
+
+  let mode = "pomodoro";
+  let remaining = durations[mode] * 60;
+  let running = false;
+  let deadline = 0;
+  let timerId = null;
+
+  const clock = document.getElementById("clock");
+  const toggle = document.getElementById("toggle");
+  const message = document.getElementById("message");
+  const settings = document.getElementById("settings");
+
+  function render() {
+    const m = Math.floor(remaining / 60);
+    const s = remaining % 60;
+    const time =
+      String(m).padStart(2, "0") + ":" +
+      String(s).padStart(2, "0");
+
+    clock.textContent = time;
+    document.title = time + " | Pomodoro Timer";
+  }
+
+  function stop() {
+    clearInterval(timerId);
+    timerId = null;
+    running = false;
+    deadline = 0;
+    toggle.textContent = "Start";
+  }
+
+  function tick() {
+    remaining = Math.max(
+      0,
+      Math.ceil((deadline - Date.now()) / 1000)
+    );
+    render();
+
+    if (remaining === 0) {
+      stop();
+      message.textContent = "Session complete!";
+    }
+  }
+
+  function startPause() {
+    if (running) {
+      tick();
+      if (running) stop();
+      return;
+    }
+
+    if (remaining === 0) {
+      remaining = durations[mode] * 60;
+    }
+
+    deadline = Date.now() + remaining * 1000;
+    running = true;
+    toggle.textContent = "Pause";
+    message.textContent = messages[mode];
+
+    timerId = setInterval(tick, 250);
+    tick();
+  }
+
+  function reset() {
+    stop();
+    remaining = durations[mode] * 60;
+    message.textContent = messages[mode];
+    render();
+  }
+
+  function changeMode(newMode) {
+    mode = newMode;
+
+    document.querySelectorAll(".tab").forEach(tab => {
+      tab.classList.toggle(
+        "active", tab.dataset.mode === mode
+      );
+    });
+
+    reset();
+  }
+
+  document.querySelectorAll(".tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      changeMode(tab.dataset.mode);
+    });
+  });
+
+  toggle.addEventListener("click", startPause);
+  document.getElementById("reset")
+    .addEventListener("click", reset);
+
+  document.getElementById("settingsButton")
+    .addEventListener("click", () => {
+      settings.classList.toggle("visible");
+    });
+
+  document.getElementById("save")
+    .addEventListener("click", () => {
+      const fields = {
+        pomodoro: document.getElementById("pomodoroTime"),
+        short: document.getElementById("shortTime"),
+        long: document.getElementById("longTime")
+      };
+
+      const updated = {};
+
+      for (const key of Object.keys(fields)) {
+        const value = Number(fields[key].value);
+
+        if (!Number.isInteger(value) ||
+            value < 1 || value > 999) {
+          alert("Enter a whole number from 1 to 999.");
+          return;
+        }
+
+        updated[key] = value;
+      }
+
+      Object.assign(durations, updated);
+      reset();
+      settings.classList.remove("visible");
+    });
+
+  render();
+</script>
+</body>
+</html>
+
