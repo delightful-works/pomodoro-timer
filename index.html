@@ -252,9 +252,9 @@
   };
 
   const messages = {
-    pomodoro: "Time to focus",
-    short: "Take a short break",
-    long: "Take a long break"
+    pomodoro: "집중하기",
+    short: "짧게 휴식하기",
+    long: "길게 휴식하기"
   };
 
   let mode = "pomodoro";
@@ -276,7 +276,6 @@
       String(s).padStart(2, "0");
 
     clock.textContent = time;
-    document.title = time + " | Pomodoro Timer";
   }
 
   function stop() {
@@ -284,7 +283,7 @@
     timerId = null;
     running = false;
     deadline = 0;
-    toggle.textContent = "Start";
+    toggle.textContent = "시작하기";
   }
 
   function tick() {
