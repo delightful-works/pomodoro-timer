@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>포모도로 타이머</title>
+<title>Pomodoro Timer</title>
 <style>
   * { box-sizing: border-box; }
 
@@ -197,13 +197,13 @@
 
   <nav class="tabs" aria-label="Timer mode">
     <button class="tab active" data-mode="pomodoro">
-      포모도로
+     Pomodoro
     </button>
     <button class="tab" data-mode="short">
-      짧은 휴식
+     Short Break
     </button>
     <button class="tab" data-mode="long">
-      긴 휴식
+     Long Break
     </button>
   </nav>
 
@@ -252,9 +252,9 @@
   };
 
   const messages = {
-    pomodoro: "집중하기",
-    short: "짧게 휴식하기",
-    long: "길게 휴식하기"
+    pomodoro: "Pomodoro",
+    short: "Short Break",
+    long: "Long Break"
   };
 
   let mode = "pomodoro";
@@ -283,7 +283,7 @@
     timerId = null;
     running = false;
     deadline = 0;
-    toggle.textContent = "시작하기";
+    toggle.textContent = "Start";
   }
 
   function tick() {
