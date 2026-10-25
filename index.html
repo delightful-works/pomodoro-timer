@@ -409,7 +409,7 @@
 <body>
 
     <!-- 상단 우측 전체화면 버튼 -->
-    <button id="fullscreenBtn" class="fullscreen-btn">전체화면 ⛶</button>
+    <button id="fullscreenBtn" class="fullscreen-btn">Full Screen ⛶</button>
 
     <script>
         const fullscreenBtn = document.getElementById('fullscreenBtn');
@@ -446,7 +446,7 @@
         // 사용자가 ESC 키를 눌러 전체화면을 나갔을 때 버튼 텍스트를 동기화
         document.addEventListener('fullscreenchange', () => {
             if (!document.fullscreenElement) {
-                fullscreenBtn.textContent = '전체화면 ⛶';
+                fullscreenBtn.textContent = 'Full Screen ⛶';
             }
         });
     </script>
