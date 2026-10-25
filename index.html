@@ -427,7 +427,7 @@
                 } else if (document.documentElement.msRequestFullscreen) { // IE/엣지
                     document.documentElement.msRequestFullscreen();
                 }
-                fullscreenBtn.textContent = '화면 축소 ⛶';
+                fullscreenBtn.textContent = 'Exit Ful Screen ⛶';
             } else {
                 // 전체화면 해제 (브라우저별 호환성 처리)
                 if (document.exitFullscreen) {
@@ -439,7 +439,7 @@
                 } else if (document.msExitFullscreen) {
                     document.msExitFullscreen();
                 }
-                fullscreenBtn.textContent = '전체화면 ⛶';
+                fullscreenBtn.textContent = 'Full Screen ⛶';
             }
         });
 
